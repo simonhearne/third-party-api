@@ -3,20 +3,28 @@ const {getEntity} = require('third-party-web')
 
 getEntities = (urls) => {
     arr = [];
+    console.log(urls)
     if (typeof(urls) !== Array) urls = urls.split(',');
+    console.log(urls)
     urls.forEach(url => {
         if (url) {
-            obj = getEntity(decodeURIComponent(url)) || {}
+            let obj = getEntity(decodeURIComponent(url)) || {}
             obj.url = url
             delete(obj.totalExecutionTime)
             delete(obj.totalOccurrences)
             delete(obj.examples)
             delete(obj.domains)
-            var newCats = []
-            obj.categories.forEach(category => {
-                newCats.push(categoryData[category])
-            })
-            obj.categories = newCats;
+            if (obj.categories) {
+                let newCats = []
+                obj.categories.forEach(category => {
+                    newCats.push(categoryData[category])
+                })
+                obj.categories = newCats
+            } else {
+                obj.categories = [{color:"hsl(0,0%,60%)",title:"Unknown",description:"Unknown third-party"}]
+            }
+            obj.name = obj.name || obj.url
+            obj.company = obj.company || "Unknown"
             arr.push(obj)
         }
     })
@@ -117,4 +125,4 @@ const categoryData = {
     }
 }
 
-app.listen(process.env.PORT || 80);
+app.listen(process.env.PORT || 8012);
