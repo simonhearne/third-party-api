@@ -1,4 +1,5 @@
 const express = require('express');
+const path = require('path');
 const {getEntity} = require('third-party-web')
 
 getEntities = (urls) => {
@@ -36,7 +37,9 @@ var app = express();
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
-
+app.get('/',(req,res) => {
+    res.sendFile(path.join(__dirname+'/index.html'));
+})
 app.get('/api/', (req,res) => {
     urls = req.query.url;
     if (urls) {

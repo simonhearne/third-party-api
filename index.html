@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Third-party API</title>
+    <style>
+        .fullwidth {width: 100%}
+        .zoom {zoom: 1.75}
+    </style>
+</head>
+
+<body>
+    <h1>Third-party Identification API</h1>
+    <p>GET or POST a resource URL to
+        <pre>/api</pre> to fetch the identity of the vendor.</p>
+        <h2>Try it out...</h2>
+    <form>
+        <div>
+            <h3>URL(s)</h3>
+            <textarea class="fullwidth" id="textarea-urls">https://www.facebook.com/
+https://www.googleanalytics.com/</textarea>
+            <input class="zoom" type="button" id="btn-get" value="GET"/>
+            <input class="zoom" type="button" id="btn-post" value="POST"/>
+        </div>
+        <div>
+            <h3>Request</h3>
+            <pre id="pre-request"></pre>
+        </div>
+        <div>
+            <h3>Response</h3>
+            <pre id="pre-response"></pre>
+        </div>
+    </form>
+    <script>
+        window.onload = () => {
+            let elemReq = document.getElementById('pre-request');
+            let elemRes = document.getElementById('pre-response');
+            let xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function() {
+                if (this.readyState == 4 && this.status == 200) {
+                    let json = JSON.parse(this.responseText);
+                    elemRes.innerHTML = JSON.stringify(json,null,2);
+                }
+            };
+            document.getElementById('btn-get').addEventListener('click',() => {
+                let urls = document.getElementById('textarea-urls').value.replace('\n',',');
+                let url = `/api/?url=${urls}`;
+                elemReq.innerHTML = `GET: <a target="_blank" href="${window.location.origin}${url}">${window.location.origin}${url}</a>`;
+                xhttp.open("GET", url, true);
+                let response = xhttp.send();
+            })
+            document.getElementById('btn-post').addEventListener('click',() => {
+                let urls = document.getElementById('textarea-urls').value.replace('\n',',');
+                elemReq.innerText = `POST: ${urls}`;
+            })
+        }
+    </script>
+</body>
+
+</html>
