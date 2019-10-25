@@ -7,23 +7,32 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Third-party API</title>
     <style>
-        .fullwidth {width: 100%}
+        html {overflow-y:scroll}
+        body {font-family:"Century Gothic", CenturyGothic, AppleGothic, sans-serif;font-size:120%;padding:2rem; width: 100%; max-width: 900px; margin: 0 auto; box-sizing: border-box}
+        pre {white-space:pre-wrap;word-wrap: break-word;background: #0002;padding: 1rem}
+        h3 {margin-bottom: 0.5rem}
+        textarea { resize:vertical;font-family:monospace}
+        .fullwidth {width:calc(100% - 7px)}
+        .halfwidth {width:calc(50% - 2px)}
         .zoom {zoom: 1.75}
+        .center {margin:0 auto; text-align:center}
     </style>
 </head>
 
 <body>
     <h1>Third-party Identification API</h1>
     <p>GET or POST a resource URL to
-        <pre>/api</pre> to fetch the identity of the vendor.</p>
-        <h2>Try it out...</h2>
+        <code>/api</code> to fetch the identity of the vendor.</p>
     <form>
         <div>
             <h3>URL(s)</h3>
-            <textarea class="fullwidth" id="textarea-urls">https://www.facebook.com/
-https://www.googleanalytics.com/</textarea>
-            <input class="zoom" type="button" id="btn-get" value="GET"/>
-            <input class="zoom" type="button" id="btn-post" value="POST"/>
+            <textarea rows=5 class="fullwidth zoom" id="textarea-urls">https://d36mpcpuzc4ztk.cloudfront.net/js/visitor.js
+https://www.facebook.com/tracking/evil.php
+https://12345.akstat.io/</textarea>
+            <div class="center">
+                <input class="zoom halfwidth" type="button" id="btn-get" value="GET"/>
+                <input class="zoom halfwidth" type="button" id="btn-post" value="POST"/>
+            </div>
         </div>
         <div>
             <h3>Request</h3>
@@ -34,6 +43,9 @@ https://www.googleanalytics.com/</textarea>
             <pre id="pre-response"></pre>
         </div>
     </form>
+    <footer>
+        Built by <a href="https://twitter.com/SimonHearne">@SimonHearne</a>
+    </footer>
     <script>
         window.onload = () => {
             let elemReq = document.getElementById('pre-request');
@@ -46,14 +58,20 @@ https://www.googleanalytics.com/</textarea>
                 }
             };
             document.getElementById('btn-get').addEventListener('click',() => {
-                let urls = document.getElementById('textarea-urls').value.replace('\n',',');
+                elemRes.innerText = "Submitted...";
+                let urls = document.getElementById('textarea-urls').value.replace(/\n/g,'&url=');
                 let url = `/api/?url=${urls}`;
-                elemReq.innerHTML = `GET: <a target="_blank" href="${window.location.origin}${url}">${window.location.origin}${url}</a>`;
+                elemReq.innerHTML = `GET: <a target="_blank" href="${window.location.origin}${url}">${window.location.origin}${url.replace(/&/g,'&amp;&#8203;')}</a>`;
+                //elemReq.innerHTML = `GET: ${window.location.origin}${url}`;
                 xhttp.open("GET", url, true);
                 let response = xhttp.send();
             })
             document.getElementById('btn-post').addEventListener('click',() => {
-                let urls = document.getElementById('textarea-urls').value.replace('\n',',');
+                elemRes.innerText = "Submitted...";
+                xhttp.open("POST", '/api', true);
+                xhttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+                let urls = document.getElementById('textarea-urls').value.replace(/\n/g,'&url=');
+                xhttp.send(`url=${urls}`);
                 elemReq.innerText = `POST: ${urls}`;
             })
         }

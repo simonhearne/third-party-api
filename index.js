@@ -1,36 +1,35 @@
 const express = require('express');
 const path = require('path');
-const {getEntity} = require('third-party-web')
+const {getEntity} = require('third-party-web');
 
 getEntities = (urls) => {
-    arr = [];
-    console.log(urls)
-    if (typeof(urls) !== Array) urls = urls.split(',');
-    console.log(urls)
+    let arr = [];
+    if (typeof(urls) !== 'object') urls = urls.split(',');
     urls.forEach(url => {
         if (url) {
-            let obj = getEntity(decodeURIComponent(url)) || {}
-            obj.url = url
-            delete(obj.totalExecutionTime)
-            delete(obj.totalOccurrences)
-            delete(obj.examples)
-            delete(obj.domains)
+            let obj = {};
+            Object.assign(obj,getEntity(decodeURIComponent(url)));
+            obj.url = url;
+            delete(obj.totalExecutionTime);
+            delete(obj.totalOccurrences);
+            delete(obj.examples);
+            delete(obj.domains);
             if (obj.categories) {
-                let newCats = []
+                let newCats = [];
                 obj.categories.forEach(category => {
-                    newCats.push(categoryData[category])
-                })
-                obj.categories = newCats
+                    newCats.push({...categoryData[category]});
+                });
+                obj.categories = newCats;
             } else {
-                obj.categories = [{color:"hsl(0,0%,60%)",title:"Unknown",description:"Unknown third-party"}]
+                obj.categories = [{color:"hsl(0,0%,60%)",title:"Unknown",description:"Unknown third-party"}];
             }
-            obj.name = obj.name || obj.url
-            obj.company = obj.company || "Unknown"
-            arr.push(obj)
+            obj.name = obj.name || obj.url;
+            obj.company = obj.company || "Unknown";
+            arr.push(obj);
         }
-    })
+    });
     return arr;
-}
+};
 
 var bodyParser = require('body-parser');
 var app = express();
@@ -39,24 +38,23 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.get('/',(req,res) => {
     res.sendFile(path.join(__dirname+'/index.html'));
-})
+});
 app.get('/api/', (req,res) => {
     urls = req.query.url;
     if (urls) {
-        res.json(getEntities(urls))
+        res.json(getEntities(urls));
     } else {
-        res.json({error:true,message:"Submit a URL (or comma-separated list of URLs) as a query parameter named `url`"})
+        res.json({error:true,message:"Submit a URL (or comma-separated list of URLs) as a query parameter named `url`"});
     }
-})
+});
 app.post('/api/', (req,res) => {
-    console.log(req.body)
     urls = req.body.url;
     if (urls) {
-        res.json(getEntities(urls))
+        res.json(getEntities(urls));
     } else {
-        res.json({error:true,message:"POST a URL (or comma-separated list of URLs) as an object named `url`"})
+        res.json({error:true,message:"POST a URL (or comma-separated list of URLs) as an object named `url`"});
     }
-})
+});
 
 const categoryData = {
     "ad": {
@@ -126,6 +124,6 @@ const categoryData = {
         "description":
         "These are miscellaneous scripts delivered via a shared origin with no precise category or attribution. Help us out by identifying more origins!"
     }
-}
+};
 
 app.listen(process.env.PORT || 8012);
