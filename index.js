@@ -60,7 +60,7 @@ app.get('/api/', (req,res) => {
     if (urls) {
         res.json(getEntities(urls));
     } else {
-        res.json({error:true,message:"Submit a URL (or comma-separated list of URLs) as a query parameter named `url`"});
+        res.json({error:true,message:"Submit URLs as a query parameter named `url`"});
     }
 });
 app.post('/api/', (req,res) => {
@@ -68,7 +68,7 @@ app.post('/api/', (req,res) => {
     if (urls) {
         res.json(getEntities(urls));
     } else {
-        res.json({error:true,message:"POST a URL (or comma-separated list of URLs) as an object named `url`"});
+        res.json({error:true,message:"POST URLs as parameters named `url``"});
     }
 });
 
