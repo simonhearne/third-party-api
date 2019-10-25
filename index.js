@@ -2,18 +2,34 @@ const express = require('express');
 const path = require('path');
 const {getEntity} = require('third-party-web');
 
+const isValidUrl = (string) => {
+    try {
+        new URL(string);
+        return true;
+    } catch (_) {
+        return false;  
+    }
+}
+
 getEntities = (urls) => {
     let arr = [];
     if (typeof(urls) !== 'object') urls = urls.split(',');
     urls.forEach(url => {
         if (url) {
             let obj = {};
-            Object.assign(obj,getEntity(decodeURIComponent(url)));
+            let res = {};
+            if (!isValidUrl(url)) {
+                res = {'error': 'Invalid URL'};
+            } else {
+                res = getEntity(decodeURIComponent(url));
+            }
+            Object.assign(obj,res);
             obj.url = url;
             delete(obj.totalExecutionTime);
-            delete(obj.totalOccurrences);
             delete(obj.examples);
             delete(obj.domains);
+            obj.usageRate = obj.totalOccurrences / 5.2e6 || -1;
+            delete(obj.totalOccurrences);
             if (obj.categories) {
                 let newCats = [];
                 obj.categories.forEach(category => {

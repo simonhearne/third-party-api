@@ -72,7 +72,7 @@ https://12345.akstat.io/</textarea>
                 xhttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
                 let urls = document.getElementById('textarea-urls').value.replace(/\n/g,'&url=');
                 xhttp.send(`url=${urls}`);
-                elemReq.innerText = `POST: ${urls}`;
+                elemReq.innerHTML = `POST: <a target="_blank" href="${window.location.origin}${url}">${window.location.origin}${url.replace(/&/g,'&amp;&#8203;')}</a>`;
             })
         }
     </script>
