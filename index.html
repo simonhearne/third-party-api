@@ -64,15 +64,16 @@ https://12345.akstat.io/</textarea>
                 elemReq.innerHTML = `GET: <a target="_blank" href="${window.location.origin}${url}">${window.location.origin}${url.replace(/&/g,'&amp;&#8203;')}</a>`;
                 //elemReq.innerHTML = `GET: ${window.location.origin}${url}`;
                 xhttp.open("GET", url, true);
-                let response = xhttp.send();
+                xhttp.send();
             })
             document.getElementById('btn-post').addEventListener('click',() => {
                 elemRes.innerText = "Submitted...";
                 xhttp.open("POST", '/api', true);
                 xhttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
                 let urls = document.getElementById('textarea-urls').value.replace(/\n/g,'&url=');
-                xhttp.send(`url=${urls}`);
+                let url = `/api/?url=${urls}`;
                 elemReq.innerHTML = `POST: <a target="_blank" href="${window.location.origin}${url}">${window.location.origin}${url.replace(/&/g,'&amp;&#8203;')}</a>`;
+                xhttp.send(`url=${urls}`);
             })
         }
     </script>
